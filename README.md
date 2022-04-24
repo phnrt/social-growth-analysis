@@ -40,10 +40,10 @@ Given the previous diagram, click on the links to find the queries answering eac
 
 1. [For the customer with the email address ‘anaberlin83@hotmail.com’, show all the merchant names the customer has transacted with in March 2019.](https://github.com/phnrt/social-growth-analysis/blob/17276f11bb1c0c7626950e44463d4620cec4e7a0/business-case-answers.sql#L3-L11)
    
-2. [For every channel category, calculate the average level CACs, per country for conversions in 2019.](https://github.com/phnrt/social-growth-analysis/blob/17276f11bb1c0c7626950e44463d4620cec4e7a0/business-case-answers.sql#L14-L29)
+2. [For every channel category, calculate the average level CACs, per country for conversions in 2019.](https://github.com/phnrt/social-growth-analysis/blob/a86689c5636a5d23316761fbe69d7912b271cdbd/business-case-answers.sql#L16-L32)
    
-3. [Get a list of all customers who had a transaction in the last 2 weeks. For those customers, show the number of transactions they did up to now. (In 1 SQL statement).](https://github.com/phnrt/social-growth-analysis/blob/17276f11bb1c0c7626950e44463d4620cec4e7a0/business-case-answers.sql#L31-L44)
+3. [Get a list of all customers who had a transaction in the last 2 weeks. For those customers, show the number of transactions they did up to now. (In 1 SQL statement).](https://github.com/phnrt/social-growth-analysis/blob/a86689c5636a5d23316761fbe69d7912b271cdbd/business-case-answers.sql#L34-L47)
    
-4. [How many customers have had at least 2 different products?](https://github.com/phnrt/social-growth-analysis/blob/17276f11bb1c0c7626950e44463d4620cec4e7a0/business-case-answers.sql#L46-L57)
+4. [How many customers have had at least 2 different products?](https://github.com/phnrt/social-growth-analysis/blob/a86689c5636a5d23316761fbe69d7912b271cdbd/business-case-answers.sql#L49-L60)
    
-5. [From those customers who had at least 2 different products, list the ones who are currently metal and how much time took for them to start the metal subscription (time to upsell)](https://github.com/phnrt/social-growth-analysis/blob/17276f11bb1c0c7626950e44463d4620cec4e7a0/business-case-answers.sql#L59-L85)
+5. [From those customers who had at least 2 different products, list the ones who are currently metal and how much time took for them to start the metal subscription (time to upsell)](https://github.com/phnrt/social-growth-analysis/blob/a86689c5636a5d23316761fbe69d7912b271cdbd/business-case-answers.sql#L62-L88)
