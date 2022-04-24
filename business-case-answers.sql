@@ -2,7 +2,6 @@
 
 -- 1. For the customer with the email address ‘anaberlin83@hotmail.com’, show all the merchant names the customer has transacted with in March 2019.
 
-
 SELECT DISTINCT merchant_name
 FROM transaction AS t
     JOIN customer c
@@ -13,7 +12,6 @@ WHERE
     
     
     -- 2. For every channel category, calculate the average level CACs, per country for conversions in 2019.
-
 
 SELECT
     marketing_channel.channel_category,
@@ -31,7 +29,6 @@ GROUP BY
     channel_spend.country 
     
     -- 3. Get a list of all customers who had a transaction in the last 2 weeks. For those customers, show the number of transactions they did up to now. (In 1 SQL statement).
-
 
 SELECT
     transactions_past_two_weeks.customer_id,
@@ -52,44 +49,37 @@ SELECT COUNT(customers_subscriptions.customer_id) as customers_at_least_two_subs
 FROM (
     SELECT
         customer_id,
-        COUNT(product_id) AS subscription_product_unique
+        COUNT(distinct product_id) AS subscription_products
     FROM subscription_product
     GROUP BY customer_id
 ) customers_subscriptions
 WHERE
-    customers_subscriptions.subscription_product_unique >= 2  
+    customers_subscriptions.subscription_products >= 2  
     
     -- 5. From those customers who had at least 2 different products, list the ones who are currently metal and how much time took for them to start the metal subscription (time to upsell)
 
-
 SELECT
     customers_subscriptions.customer_id,
-    date_part(
-        'day',
-        customers_metal_subscriptions.created_at:: TIMESTAMP - MIN(customers_not_metal_subscriptions.created_at:: TIMESTAMP)
+    date_part('day',
+          customers_metal_subscriptions.created_at:: TIMESTAMP 
+        - MIN(customers_not_metal_subscriptions.created_at:: TIMESTAMP)
     ) AS time_to_upsell
 FROM (
-    SELECT
-        customer_id,
-        COUNT(product_id) AS subscription_product_unique
+    SELECT customer_id, COUNT(distinct product_id) AS subscription_products
     FROM subscription_product
     GROUP BY customer_id
 ) customers_subscriptions
 JOIN (
-    SELECT *
+    SELECT customer_id, created_at
     FROM subscription_product
-    WHERE
-        product_name = 'metal' AND
-        is_current_subscription = TRUE
-) customers_metal_subscriptions
+    WHERE product_name = 'metal' AND is_current_subscription = TRUE
+) customers_metal_subscriptions 
 ON customers_metal_subscriptions.customer_id = customers_subscriptions.customer_id
 JOIN (
-    SELECT *
+    SELECT customer_id, created_at
     FROM subscription_product
-    WHERE
-        product_name != 'metal' AND
-        is_current_subscription != TRUE
+    WHERE product_name != 'metal' AND is_current_subscription != TRUE
 ) customers_not_metal_subscriptions
 ON customers_metal_subscriptions.customer_id = customers_not_metal_subscriptions.customer_id
-WHERE subscription_product_unique >= 2
+WHERE customers_subscriptions.subscription_products >= 2
 GROUP BY customers_subscriptions.customer_id, customers_metal_subscriptions.created_at
