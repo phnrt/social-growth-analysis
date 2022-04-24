@@ -1,6 +1,6 @@
 -- Part 1 of Business Case N26
 
--- 1. For the customer with the email address ‘anaberlin83@hotmail.com’, show all the merchant names the customer has transacted with in March 2019.
+    -- 1. For the customer with the email address ‘anaberlin83@hotmail.com’, show all the merchant names the customer has transacted with in March 2019.
 
 SELECT DISTINCT merchant_name
 FROM transaction AS t
