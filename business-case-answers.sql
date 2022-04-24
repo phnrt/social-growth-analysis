@@ -25,7 +25,7 @@ FROM channel_spend cs
 WHERE EXTRACT(
         YEAR
         FROM c1.conversion_timestamp
-    ) = 2019 ANDcs.year = 2019
+    ) = 2019 AND cs.year = 2019
 GROUP BY
     c1.channel_category,
     cs.country 
@@ -34,32 +34,32 @@ GROUP BY
 
 
 SELECT
-    t2.customer_id,
+    t.customer_id,
     COUNT(t1.transaction_id) AS transactions_ever
 FROM (
     SELECT customer_id
     FROM transaction
     WHERE created_at >= CURRENT_DATE - 14
-) t2
+) t
 LEFT JOIN transaction t1
-ON t1.customer_id = t2.customer_id
+ON t1.customer_id = t.customer_id
 GROUP BY
-    t2.customer_id 
+    t.customer_id 
     
     -- 4. How many customers have had at least 2 different products?
     -- Assumption: the question wants to know customers from all database that had at least 2 products
     -- REVIEWED: DONE / RESULT IS CORRECT
 
-SELECT COUNT(customer_id)
+SELECT COUNT(sub1.customer_id)
 FROM (
     SELECT
-        s.customer_id,
-        COUNT(s.product_id) AS subscription_product_unique
-    FROM subscription_product s
+        customer_id,
+        COUNT(product_id) AS subscription_product_unique
+    FROM subscription_product
     GROUP BY customer_id
 ) sub1
 WHERE
-    subscription_product_unique >= 2 
+    sub1.subscription_product_unique >= 2  
     
     -- 5. From those customers who had at least 2 different products, list the ones who are currently metal and how much time took for them to start the metal subscription (time to upsell)
 
