@@ -47,8 +47,6 @@ GROUP BY
     t.customer_id 
     
     -- 4. How many customers have had at least 2 different products?
-    -- Assumption: the question wants to know customers from all database that had at least 2 products
-    -- REVIEWED: DONE / RESULT IS CORRECT
 
 SELECT COUNT(sub1.customer_id)
 FROM (
