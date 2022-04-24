@@ -16,57 +16,57 @@ WHERE
 
 
 SELECT
-    c1.channel_category,
-    cs.country,
-    SUM(cs.spend_euros) / COUNT(DISTINCT c1.customer_id) AS customer_acquisition_cost
-FROM channel_spend cs
-    JOIN marketing_channel c1
-    ON cs.channel_id = c1.channel_id
+    marketing_channel.channel_category,
+    channel_spend.country,
+    SUM(channel_spend.spend_euros) / COUNT(DISTINCT marketing_channel.customer_id) AS customer_acquisition_cost
+FROM channel_spend
+    JOIN marketing_channel
+    ON channel_spend.channel_id = marketing_channel.channel_id
 WHERE EXTRACT(
         YEAR
-        FROM c1.conversion_timestamp
-    ) = 2019 AND cs.year = 2019
+        FROM marketing_channel.conversion_timestamp
+    ) = 2019 AND channel_spend.year = 2019
 GROUP BY
-    c1.channel_category,
-    cs.country 
+    marketing_channel.channel_category,
+    channel_spend.country 
     
     -- 3. Get a list of all customers who had a transaction in the last 2 weeks. For those customers, show the number of transactions they did up to now. (In 1 SQL statement).
 
 
 SELECT
-    t.customer_id,
-    COUNT(t1.transaction_id) AS transactions_ever
+    transactions_past_two_weeks.customer_id,
+    COUNT(transactions_history.transaction_id) AS all_transactions
 FROM (
     SELECT customer_id
     FROM transaction
     WHERE created_at >= CURRENT_DATE - 14
-) t
-LEFT JOIN transaction t1
-ON t1.customer_id = t.customer_id
+) transactions_past_two_weeks
+LEFT JOIN transaction transactions_history
+ON transactions_history.customer_id = transactions_past_two_weeks.customer_id
 GROUP BY
-    t.customer_id 
+    transactions_past_two_weeks.customer_id 
     
     -- 4. How many customers have had at least 2 different products?
 
-SELECT COUNT(sub1.customer_id)
+SELECT COUNT(customers_subscriptions.customer_id) as customers_at_least_two_subscriptions
 FROM (
     SELECT
         customer_id,
         COUNT(product_id) AS subscription_product_unique
     FROM subscription_product
     GROUP BY customer_id
-) sub1
+) customers_subscriptions
 WHERE
-    sub1.subscription_product_unique >= 2  
+    customers_subscriptions.subscription_product_unique >= 2  
     
     -- 5. From those customers who had at least 2 different products, list the ones who are currently metal and how much time took for them to start the metal subscription (time to upsell)
 
 
 SELECT
-    s.customer_id,
+    customers_subscriptions.customer_id,
     date_part(
         'day',
-        s1.created_at:: TIMESTAMP - MIN(s2.created_at:: TIMESTAMP)
+        customers_metal_subscriptions.created_at:: TIMESTAMP - MIN(customers_not_metal_subscriptions.created_at:: TIMESTAMP)
     ) AS time_to_upsell
 FROM (
     SELECT
@@ -74,22 +74,22 @@ FROM (
         COUNT(product_id) AS subscription_product_unique
     FROM subscription_product
     GROUP BY customer_id
-) s
+) customers_subscriptions
 JOIN (
     SELECT *
     FROM subscription_product
     WHERE
         product_name = 'metal' AND
         is_current_subscription = TRUE
-) s1
-ON s1.customer_id = s.customer_id
+) customers_metal_subscriptions
+ON customers_metal_subscriptions.customer_id = customers_subscriptions.customer_id
 JOIN (
     SELECT *
     FROM subscription_product
     WHERE
         product_name != 'metal' AND
         is_current_subscription != TRUE
-) s2
-ON s1.customer_id = s2.customer_id
+) customers_not_metal_subscriptions
+ON customers_metal_subscriptions.customer_id = customers_not_metal_subscriptions.customer_id
 WHERE subscription_product_unique >= 2
-GROUP BY s.customer_id, s1.created_at
+GROUP BY customers_subscriptions.customer_id, customers_metal_subscriptions.created_at
