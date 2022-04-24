@@ -16,7 +16,10 @@ WHERE
 SELECT
     marketing_channel.channel_category,
     channel_spend.country,
-    SUM(channel_spend.spend_euros) / COUNT(DISTINCT marketing_channel.customer_id) AS customer_acquisition_cost
+    ( 
+          SUM(channel_spend.spend_euros) 
+        / COUNT(DISTINCT marketing_channel.customer_id)
+    ) AS customer_acquisition_cost
 FROM channel_spend
     JOIN marketing_channel
     ON channel_spend.channel_id = marketing_channel.channel_id
